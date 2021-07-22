@@ -45,58 +45,63 @@ func connect(domain string, port string) (*grpc.ClientConn, error) {
 	return conn, err
 }
 
-func NewLauncher(debug bool, domain string, port string) (*Launcher, error) {
-	var l Launcher
-	l.debug = debug
+func NewLauncher(dev, reload, https bool, domain string, port string) *Launcher {
+	var l = new(Launcher)
+	l.dev = dev
+	l.reload = reload
+	l.https = https
 	l.statusWeb = make(chan error)
 	l.statusRedirector = make(chan error)
 
-	var conn, err = connect(domain, port)
-	if err != nil {
-		return nil, err
-	}
-
-	var cc = transport.NewContentClient(conn)
-
-	var ws http.Handler
-	ws, err = web.NewWebService(debug, cc)
-	if err != nil {
-		return nil, err
-	}
-
-	if l.debug {
-		l.web, err = pkgHttp.NewServer(ws, l.statusWeb, false)
-		if err != nil {
-			return nil, err
-		}
-
-		return &l, err
-	}
-
-	l.redirector, err = pkgHttp.NewRedirector(l.statusRedirector)
-	if err != nil {
-		return nil, err
-	}
-
-	l.web, err = pkgHttp.NewServer(ws, l.statusWeb, true)
-	if err != nil {
-		return nil, err
-	}
-
-	return &l, err
+	return l
 }
 
 type Launcher struct {
-	debug            bool
-	content          transport.Content
+	dev              bool
+	reload           bool
+	https            bool
 	web              *pkgHttp.Server
 	redirector       *pkgHttp.Redirector
 	statusWeb        chan error
 	statusRedirector chan error
 }
 
+func (l *Launcher) Prepare() error {
+	var conn, err = connect(domain, port)
+	if err != nil {
+		return err
+	}
+
+	var cc = transport.NewContentClient(conn)
+
+	var ws http.Handler
+	ws, err = web.NewWebService(l.dev, l.reload, l.https, cc)
+	if err != nil {
+		return err
+	}
+
+	if l.https {
+		l.redirector, err = pkgHttp.NewRedirector(l.statusRedirector)
+		if err != nil {
+			return err
+		}
+
+		l.web, err = pkgHttp.NewServer(ws, l.statusWeb, true)
+		if err != nil {
+			return err
+		}
+	} else {
+		l.web, err = pkgHttp.NewServer(ws, l.statusWeb, false)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (l *Launcher) Launch() error {
-	if l.debug {
+	if l.dev {
 		l.web.Launch()
 		return <-l.statusWeb
 	} else {
@@ -121,14 +126,16 @@ const (
 )
 
 func main() {
-	var debug = flag.Bool("debug", true, "set to false to launch a production ready system")
+	var dev = flag.Bool("dev", true, "web dev environment")
+	var reload = flag.Bool("reload", true, "reload html templates on request")
+	var https = flag.Bool("https", false, "launch https")
 	flag.Parse()
 
-	var l, err = NewLauncher(*debug, domain, port)
+	var l = NewLauncher(*dev, *reload, *https, domain, port)
+	var err = l.Prepare()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err = l.Launch()
-	log.Fatalln(err)
+	log.Fatalln(l.Launch())
 }

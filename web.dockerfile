@@ -11,10 +11,10 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-COPY internal/asset/transport internal/asset/transport
-COPY pkg/http internal/http
+COPY internal/web/transport internal/web/transport
 COPY internal/web internal/web
-COPY pkg/utils internal/utils
+COPY pkg/http pkg/http
+COPY pkg/utils pkg/utils
 COPY cmd cmd
 
 RUN go build -o launcher ./cmd/web/main.go
@@ -27,4 +27,4 @@ WORKDIR /srv
 
 COPY --from=build-env /src/launcher .
 
-CMD ./launcher -debug=false
+CMD ./launcher -dev=true -https=true -reload=false

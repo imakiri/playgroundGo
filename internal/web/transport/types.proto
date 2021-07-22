@@ -6,12 +6,48 @@ option go_package = "github.com/imakiri/gorum/internal/web/transport";
 
 message Request {}
 
-message Content {
-  bytes Main = 1;
-  bytes Index = 2;
-  bytes StaticCss = 3;
-  bytes StaticIco = 4;
-  bytes GorumMain = 5;
-  bytes GorumIndex = 6;
+message Template {
+  bytes Dev = 1;
+  bytes Rel = 2;
 }
+
+message Content {
+  bytes Ico = 1;
+  bytes Css = 2;
+  ContentHtml Html = 3;
+}
+
+message ContentHtml {
+  ContentHtmlBody Body = 1;
+  Template Layout = 2;
+}
+
+message ContentHtmlBody {
+  ContentHtmlBodyPages Pages = 1;
+  ContentHtmlBodyGorum Gorum = 2;
+}
+
+message ContentHtmlBodyPages {
+  bytes Gorum = 1;
+  bytes Index = 2;
+}
+
+message ContentHtmlBodyGorum {
+  ContentHtmlBodyGorumContent Content = 1;
+  Template Layout = 2;
+}
+
+message ContentHtmlBodyGorumContent {
+  ContentHtmlBodyGorumContentPages Pages = 1;
+}
+
+message ContentHtmlBodyGorumContentPages {
+  Template Index = 1;
+  Template LogIn = 2;
+  Template Notifications = 3;
+  Template Profile = 4;
+  Template Settings = 5;
+  Template SignUp = 6;
+}
+
 

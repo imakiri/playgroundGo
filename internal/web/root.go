@@ -6,23 +6,40 @@ import (
 	"time"
 )
 
-func (s *webService) root(w http.ResponseWriter, r *http.Request) {
+func (s *webService) rootIndex(w http.ResponseWriter, r *http.Request) {
 	var t = time.Now().Format("2006-01-02 15:04:05")
-	//fmt.Printf("[%s] / hit by ip:%s\n", t, r.Header["X-Forwarded-For"])
 	fmt.Printf("[%s] / hit by ip:%s\n", t, r.RemoteAddr)
 
-	w.Header().Set("Content-Type", "text/html")
+	s.header(w, r)
+	s.push(w, r)
 
-	if pusher, ok := w.(http.Pusher); ok {
-		var err = push(pusher)
-		if err != nil {
-			fmt.Println(err)
-		}
+	var err error
+	if s.dev {
+		err = s.content.Root.Index.Dev.Execute(w, nil)
+	} else {
+		err = s.content.Root.Index.Rel.Execute(w, nil)
 	}
 
-	var err = s.content.Index.ExecuteTemplate(w, "index", nil)
 	if err != nil {
-		ise(w, err)
-		return
+		s.ise(w, err)
+	}
+}
+
+func (s *webService) rootGorum(w http.ResponseWriter, r *http.Request) {
+	var t = time.Now().Format("2006-01-02 15:04:05")
+	fmt.Printf("[%s] / hit by ip:%s\n", t, r.RemoteAddr)
+
+	s.header(w, r)
+	s.push(w, r)
+
+	var err error
+	if s.dev {
+		err = s.content.Root.Gorum.Dev.Execute(w, nil)
+	} else {
+		err = s.content.Root.Gorum.Rel.Execute(w, nil)
+	}
+
+	if err != nil {
+		s.ise(w, err)
 	}
 }

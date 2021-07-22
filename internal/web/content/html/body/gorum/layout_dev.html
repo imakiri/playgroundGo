@@ -1,0 +1,24 @@
+{{ define "body" }}
+
+    <div class="body_gorum">
+        <div class="body_gorum-menu">
+            <a href="/gorum/" class="body_gorum-menu-button body_gorum-menu-button_active">Main</a>
+        </div>
+
+        {{ template "content" }}
+
+        <div class="body_gorum-account">
+            <a href="/gorum/user/profile" class="body_gorum-account-avatar">
+                <img class="body_gorum-account-avatar-img" src="https://i.imgur.com/WJPKYPw.png" alt="avatar">
+            </a>
+            <div class="body_gorum-account-content"></div>
+            <a href="/gorum/user/notifications" class="body_gorum-account-button">Notifications</a>
+            <a href="/gorum/user/settings" class="body_gorum-account-button">Settings</a>
+            <a href="/gorum/user/logout" class="body_gorum-account-button">Log Out</a>
+            <a href="/gorum/user/login" class="body_gorum-account-button">Log In</a>
+            <a href="/gorum/user/signup" class="body_gorum-account-button">Sign Up</a>
+        </div>
+
+    </div>
+
+{{ end }}

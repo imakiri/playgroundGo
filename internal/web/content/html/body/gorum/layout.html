@@ -1,0 +1,60 @@
+{{ define "body" }}
+
+    <div class="body_gorum">
+        <div class="body_gorum-account">
+
+            {{ if .IsAuthorized }}
+
+                <a href="/gorum/user/profile" class="body_gorum-account-avatar">
+                    <img class="body_gorum-account-avatar-img" src="https://i.imgur.com/WJPKYPw.png" alt="avatar">
+                </a>
+                <div class="body_gorum-account-content"></div>
+
+                {{ if .Page eq "notifications" }}
+                    <a href="/gorum/user/notifications"
+                       class="body_gorum-account-button body_gorum-account-button_active">Notifications</a>
+                {{ else }}
+                    <a href="/gorum/user/notifications" class="body_gorum-account-button">Notifications</a>
+                {{ end }}
+
+                {{ if .Page eq "settings" }}
+                    <a href="/gorum/user/settings" class="body_gorum-account-button body_gorum-account-button_active">Settings</a>
+                {{ else }}
+                    <a href="/gorum/user/settings" class="body_gorum-account-button">Settings</a>
+                {{ end }}
+
+                <a href="/gorum/user/logout" class="body_gorum-account-button">Log Out</a>
+
+            {{ else }}
+
+                {{ if .Page eq "login" }}
+                    <a href="/gorum/login" class="body_gorum-account-button body_gorum-account-button_active">Log In</a>
+                {{ else }}
+                    <a href="/gorum/login" class="body_gorum-account-button">Log In</a>
+                {{ end }}
+
+                {{ if .Page eq "signup" }}
+                    <a href="/gorum/signup" class="body_gorum-account-button body_gorum-account-button_active">Sign
+                        Up</a>
+                {{ else }}
+                    <a href="/gorum/signup" class="body_gorum-account-button">Sign Up</a>
+                {{ end }}
+
+            {{ end }}
+
+        </div>
+
+        {{ template "content" .Content }}
+
+        <div class="body_gorum-menu">
+
+            {{ if .Page eq "main" }}
+                <a href="/gorum" class="body_gorum-menu-button body_gorum-menu-button_active">Main</a>
+            {{ else }}
+                <a href="/gorum" class="body_gorum-menu-button">Main</a>
+            {{ end }}
+
+        </div>
+    </div>
+
+{{ end }}

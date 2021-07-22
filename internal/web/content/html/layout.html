@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>imakiri's personal site</title>
+    <link href="/static/css" rel="stylesheet">
+    <link href="/static/ico" rel="icon">
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header-space"></div>
+        <div class="header-center">
+
+            {{ if .Page eq "home"}}
+
+                <a href="/" class="header-button-home header-button-home_active">HOME</a>
+                <a href="/gorum" class="header-button">GORUM</a>
+
+            {{ end }}
+
+            {{ if .Page eq "gorum"}}
+
+                <a href="/" class="header-button-home">HOME</a>
+                <a href="/gorum" class="header-button header-button_active">GORUM</a>
+
+            {{ end }}
+
+        </div>
+        <div class="header-space"></div>
+    </div>
+
+    {{ template "body" .Body }}
+
+</div>
+</body>
+</html>
+
